@@ -16,6 +16,10 @@ then
         then
             echo "Enter the keyword or name of the website: "
             read -r name_of_website
+            if  grep -i "$name_of_website" "$FILENAME"
+            then
+                sudo sed -i  "$(whoami)     $(date)     $name_of_website    $PASSWORD_GEN" "$FILENAME"
+            fi
             echo "$(whoami)     $(date)     $name_of_website    $PASSWORD_GEN" | sudo tee -a "$FILENAME"
             break
         fi
