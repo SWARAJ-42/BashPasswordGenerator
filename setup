@@ -1,0 +1,60 @@
+#! /bin/bash
+
+# Check to see if rsync is installed
+if ! command -v openssl > /dev/null 2>&1
+then 
+    echo "This script requires openssl to be installed."
+    release_file=/etc/os-release
+    if grep -q "Arch" $release_file
+    then
+        # The host is  based on Arch
+        sudo pacman -Syy openssl
+    fi
+
+    if grep -q "Ubuntu" $release_file || grep -q "Debian" $release_file
+    then
+        # The host id based on debian or Ubuntu,
+        # Run the apt version of the command
+        sudo apt update
+        sudo apt install openssl
+    fi
+
+    if grep -q "CentOS" $release_file
+    then
+        # The host id based on CentOS,
+        # Run the yum version of the command
+        sudo check-update
+        sudo yum install openssl
+    fi
+fi
+
+# create a hidden password_folder on root directory
+FILENAME=/.pass/passes_$(whoami)
+
+if [ -f "$FILENAME" ]
+then
+    echo "Are you sure you want to run the setup script again?"
+    echo "Running this will destroy all your previously saved passwords."
+    echo "[yes i want to run the script/no]"
+    read -r DECISION
+    if [ "$DECISION" = "yes i want to run the script" ]
+    then
+        sudo -k
+        sudo rm -r /.pass
+        sudo mkdir /.pass
+        sudo touch "$FILENAME"
+        sudo chmod 700 "$FILENAME"
+        echo "######################" | sudo tee  "$FILENAME"
+        echo "#   Your passwords   #" | sudo tee -a "$FILENAME"
+        echo "######################" | sudo tee -a "$FILENAME"
+    fi
+else
+    sudo mkdir /.pass
+    sudo touch "$FILENAME"
+    sudo chmod 700 "$FILENAME"
+    sudo echo "######################" | sudo tee  "$FILENAME"
+    echo "#   Your passwords   #" | sudo tee -a "$FILENAME"
+    echo "######################" | sudo tee -a "$FILENAME"
+fi
+# adding passgen executable to /usr/local/bin
+sudo cp ./passgen /usr/local/bin/passgen

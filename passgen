@@ -1,0 +1,34 @@
+#! /bin/bash
+
+FILENAME=/.pass/passes_$(whoami)
+
+if [ -f "$FILENAME" ]
+then
+    echo "Please enter the length of the password: "
+    read -r PASS_LENGTH
+    openssl rand -base64 48 | cut -c1-"$PASS_LENGTH"
+    PASSWORD_GEN=$(openssl rand -base64 48 | cut -c1-"$PASS_LENGTH")
+    echo "Regenerate ? (yes/no)"
+    read -r decision
+    while true
+    do
+        if [ "$decision" = "no" ]
+        then
+            echo "Enter the keyword or name of the website: "
+            read -r name_of_website
+            echo "$(whoami)     $(date)     $name_of_website    $PASSWORD_GEN" | sudo tee -a "$FILENAME"
+            break
+        fi
+        echo "Please enter the length of the password: "
+        read -r PASS_LENGTH
+        openssl rand -base64 48 | cut -c1-"$PASS_LENGTH"
+        PASSWORD_GEN=$(openssl rand -base64 48 | cut -c1-"$PASS_LENGTH")
+        echo "Regenerate ? (yes/no)"
+        read -r decision
+    done
+else
+    echo "It seems like you haven't run the setup script"
+    echo "run it and try again"
+    exit 2
+fi
+
