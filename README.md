@@ -8,12 +8,12 @@ A simple password generator in bash.
 ./setup 
 ```
 ## Usage
-- to use the command use:
+- to generate password use:
 ```
 passgen
 ```
-- passwords will be stored in 
+- to view the passwords for working user:
 
 ```
-/.pass/passes_$user file
+sudo cat /.pass/passes_$(whoami)
 ```
